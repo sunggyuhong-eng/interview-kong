@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일정 참여 조사 (1,2,3지망)</title>
+    <style>
+        :root { --primary: #4a90e2; --sub: #f1f3f5; --accent: #28a745; }
+        body { font-family: 'Pretendard', sans-serif; background: #f5f7fa; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { text-align: center; color: #333; margin-bottom: 5px; }
+        .guide { text-align: center; font-size: 0.85rem; color: #666; margin-bottom: 20px; }
+        
+        /* 달력 */
+        .calendar-header { text-align: center; font-weight: bold; margin-bottom: 10px; color: var(--primary); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 20px; }
+        .day { padding: 10px 0; text-align: center; border: 1px solid #eee; border-radius: 5px; cursor: pointer; font-size: 0.85rem; }
+        .day:hover { background: #f0f7ff; }
+        .day.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .day.label { border: none; font-weight: bold; color: #999; cursor: default; }
+        .day.empty { border: none; cursor: default; }
+
+        /* 지망별 섹션 */
+        .choice-box { background: var(--sub); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .choice-title { font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .choice-title span { color: var(--primary); }
+        .selected-date-display { font-size: 1rem; color: #333; margin-bottom: 10px; font-weight: 500; }
+        
+        .time-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .time-group label { background: white; border: 1px solid #ddd; padding: 6px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; }
+        .time-group input { display: none; }
+        .time-group input:checked + label { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .user-info { margin-top: 20px; }
+        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📅 면접 콩디네이터 </h2>
+    <p class="guide">달력에서 날짜를 클릭하여 1, 2, 3지망을 정해주세요.</p>
+
+    <div class="calendar-header" id="month-year"></div>
+    <div class="calendar-grid" id="calendar-days">
+        <div class="day label">일</div><div class="day label">월</div><div class="day label">화</div>
+        <div class="day label">수</div><div class="day label">목</div><div class="day label">금</div>
+        <div class="day label">토</div>
+    </div>
+
+    <form id="survey-form">
+        <div class="choice-box">
+            <div class="choice-title"><span>1지망</span> <small id="reset1" style="cursor:pointer; color:#999;">초기화</small></div>
+            <div class="selected-date-display" id="date-text-1">날짜를 선택하세요</div>
+            <input type="hidden" name="date1" id="hidden-date-1">
+            <div class="time-group">
+                <input type="checkbox" name="time1" value="14:00" id="t1-2"><label for="t1-2">14:00</label>
+                <input type="checkbox" name="time1" value="15:00" id="t1-3"><label for="t1-3">15:00</label>
+                <input type="checkbox" name="time1" value="16:00" id="t1-4"><label for="t1-4">16:00</label>
+                <input type="checkbox" name="time1" value="17:00" id="t1-5"><label for="t1-5">17:00</label>
+            </div>
+        </div>
+
+        <div class="choice-box">
+            <div class="choice-title"><span>2지망</span> <small id="reset2" style="cursor:pointer; color:#999;">초기화</small></div>
+            <div class="selected-date-display" id="date-text-2">날짜를 선택하세요</div>
+            <input type="hidden" name="date2" id="hidden-date-2">
+            <div class="time-group">
+                <input type="checkbox" name="time2" value="14:00" id="t2-2"><label for="t2-2">14:00</label>
+                <input type="checkbox" name="time2" value="15:00" id="t2-3"><label for="t2-3">15:00</label>
+                <input type="checkbox" name="time2" value="16:00" id="t2-4"><label for="t2-4">16:00</label>
+                <input type="checkbox" name="time2" value="17:00" id="t2-5"><label for="t2-5">17:00</label>
+            </div>
+        </div>
+
+        <div class="choice-box">
+            <div class="choice-title"><span>3지망</span> <small id="reset3" style="cursor:pointer; color:#999;">초기화</small></div>
+            <div class="selected-date-display" id="date-text-3">날짜를 선택하세요</div>
+            <input type="hidden" name="date3" id="hidden-date-3">
+            <div class="time-group">
+                <input type="checkbox" name="time3" value="14:00" id="t3-2"><label for="t3-2">14:00</label>
+                <input type="checkbox" name="time3" value="15:00" id="t3-3"><label for="t3-3">15:00</label>
+                <input type="checkbox" name="time3" value="16:00" id="t3-4"><label for="t3-4">16:00</label>
+                <input type="checkbox" name="time3" value="17:00" id="t3-5"><label for="t3-5">17:00</label>
+            </div>
+        </div>
+
+        <div class="user-info">
+            <input type="text" name="user_name" placeholder="작성자 성함" required>
+        </div>
+
+        <button type="submit" id="submit-btn">설문 제출하기</button>
+    </form>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx4TEm1bRi1m21ORMOWZNNh6K-eB_PfTrk8iPWSJhLYDsadusW_Yj0d1iY7EGwjiyLHow/exec';
+    
+    let choices = [null, null, null]; // 지망별 선택된 날짜 저장
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+
+    function renderCalendar() {
+        const grid = document.getElementById('calendar-days');
+        document.getElementById('month-year').innerText = `${year}년 ${month + 1}월`;
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const div = document.createElement('div'); div.classList.add('day', 'empty'); grid.appendChild(div);
+        }
+
+        for (let d = 1; d <= lastDate; d++) {
+            const dateDiv = document.createElement('div');
+            dateDiv.classList.add('day');
+            dateDiv.innerText = d;
+            dateDiv.onclick = () => selectDate(d);
+            grid.appendChild(dateDiv);
+        }
+    }
+
+    function selectDate(day) {
+        const dateStr = `${month + 1}월 ${day}일`;
+        // 이미 선택된 날짜인지 확인
+        if (choices.includes(dateStr)) { alert("이미 선택한 날짜입니다."); return; }
+        
+        // 빈 지망 찾기
+        const emptyIndex = choices.findIndex(c => c === null);
+        if (emptyIndex === -1) { alert("3지망까지 모두 선택하셨습니다. 수정을 원하시면 초기화를 눌러주세요."); return; }
+
+        choices[emptyIndex] = dateStr;
+        document.getElementById(`date-text-${emptyIndex + 1}`).innerText = dateStr;
+        document.getElementById(`hidden-date-${emptyIndex + 1}`).value = dateStr;
+        updateCalendarUI();
+    }
+
+    function updateCalendarUI() {
+        document.querySelectorAll('.day:not(.empty):not(.label)').forEach(el => {
+            el.classList.toggle('selected', choices.includes(`${month + 1}월 ${el.innerText}일`));
+        });
+    }
+
+    // 초기화 버튼 이벤트
+    [1, 2, 3].forEach(i => {
+        document.getElementById(`reset${i}`).onclick = () => {
+            choices[i-1] = null;
+            document.getElementById(`date-text-${i}`).innerText = "날짜를 선택하세요";
+            document.getElementById(`hidden-date-${i}`).value = "";
+            updateCalendarUI();
+        };
+    });
+
+    document.getElementById('survey-form').onsubmit = async (e) => {
+        e.preventDefault();
+        if (choices.includes(null)) { alert("3지망까지 날짜를 모두 선택해주세요."); return; }
+
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true; btn.innerText = "제출 중...";
+
+        const formData = new FormData(e.target);
+        
+        // 다중 선택된 시간을 콤마로 연결
+        const params = new URLSearchParams();
+        params.append("user_name", formData.get("user_name"));
+        [1,2,3].forEach(i => {
+            params.append(`date${i}`, formData.get(`date${i}`));
+            params.append(`time${i}`, formData.getAll(`time${i}`).join(", "));
+        });
+
+        try {
+            await fetch(scriptURL, { method: 'POST', body: params });
+            alert("제출이 완료되었습니다!");
+            location.reload();
+        } catch (err) {
+            alert("오류가 발생했습니다.");
+            btn.disabled = false; btn.innerText = "설문 제출하기";
+        }
+    };
+
+    renderCalendar();
+</script>
+
+</body>
+</html>
